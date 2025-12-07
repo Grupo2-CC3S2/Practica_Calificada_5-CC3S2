@@ -64,14 +64,21 @@ delete: stop
 
 venv: ## Crea entorno virtual
 	python -m venv .venv
-	source .venv/Scripts/activate && pip install -r requirements.txt
+ifeq ($(OS),Windows_NT)
+	.venv\Scripts\pip.exe install -r requirements.txt
+else
+	.venv/bin/pip install -r requirements.txt
+endif
 
 del-env: ## Elimina entorno virtual
 	rm -rf .venv
 
-test:
-	@echo "Ejecuta pruebas"
-	source .venv/Scripts/activate && python -m pytest tests/
+test: ## Ejecuta pruebas
+ifeq ($(OS),Windows_NT)
+	.venv\Scripts\python.exe -m pytest tests/
+else
+	.venv/bin/python -m pytest tests/
+endif
 
 clean: del-env ## Limpia todo el entorno
 	@echo "Entorno completamente limpio"
