@@ -1,0 +1,36 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: make venv
+
+      - name: Lint
+        run: echo "Funcion por implementar"
+
+      - name: build containers
+        run: make run
+
+      - name: realizando peticiones de prueba
+        run: make requests
+
+      - name: Test
+        run: make test
+
+      - name: Delete containers
+        run: make delete
+
+      - name: Clean environment
+        run: make clean
