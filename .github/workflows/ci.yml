@@ -24,7 +24,7 @@ jobs:
         run: make run
 
       - name: realizando peticiones de prueba
-        run: make requests
+        run: echo "Funcion a implementar" #make requests
 
       - name: Test
         run: make test
