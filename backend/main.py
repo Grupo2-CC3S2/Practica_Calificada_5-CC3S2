@@ -2,6 +2,8 @@ from fastapi import FastAPI
 
 app = FastAPI(title="internal-backend")
 
+# Generar data de ejemplo
+data = [{"id": i, "value": f"Item {i}"} for i in range(1, 101)]
 
 @app.get("/health")
 async def health():
@@ -9,8 +11,10 @@ async def health():
 
 @app.get("/data")
 async def get_data():
-    return {"data": "Estos son datos públicos del backend"}
+    return {"data": data}  
 
 @app.get("/admin")
 async def get_admin():
-    return {"admin": "información secreta solo para administradores"}
+    return {"admin": "Administración interna"}
+
+
