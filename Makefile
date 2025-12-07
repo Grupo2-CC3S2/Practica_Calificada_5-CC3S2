@@ -37,17 +37,17 @@ stop:
 
 requests: # Peticiones HTTP
 	@echo "Realizando petición HTTP al gateway para la data"
-	curl -H "X-Internal-Token: 123456" http://localhost:8001/proxy/data
+	docker exec gateway curl -H "X-Internal-Token: 123456" http://localhost:8001/proxy/data
 	@echo "Realizando petición HTTP al gateway para admin"
-	curl -H "X-Internal-Token: 123456" http://localhost:8001/proxy/admin
+	docker exec gateway curl -H "X-Internal-Token: 123456" http://localhost:8001/proxy/admin
 	@echo "Petición realizada"
 	@echo "Realizando petición HTTP al backend directamente"
 	@echo "Realizando petición /health"
-	curl http://localhost:8000/health
+	docker exec backend curl http://localhost:8000/health
 	@echo "Realizando petición /data"
-	curl http://localhost:8000/data
+	docker exec backend curl http://localhost:8000/data
 	@echo "Realizando petición para admin"
-	curl http://localhost:8000/admin
+	docker exec backend curl http://localhost:8000/admin
 	@echo "Peticiones realizadas"
 
 check: # Verificar estado de contenedores
