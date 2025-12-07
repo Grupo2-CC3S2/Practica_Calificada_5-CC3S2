@@ -16,3 +16,5 @@ async def get_data():
 @app.get("/admin")
 async def get_admin():
     return {"admin": "Administración interna"}
+
+
