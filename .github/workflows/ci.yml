@@ -27,7 +27,6 @@ jobs:
 
       - name: realizando peticiones de prueba
         run: |
-          run: |
           for i in $(seq 1 7); do
             curl -H "X-Internal-Token: 123456" http://localhost:8001/proxy/data
             echo
