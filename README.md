@@ -78,3 +78,59 @@ tests\test_gateway.py ...                                                [100%]
 
 ============================== 3 passed in 0.83s ==============================
 ```
+
+
+
+## Sprint2 
+Para ahora levantar los servicios, debemos de hacer
+```bash
+docker compose up --build
+```
+
+Y con esto, notaremos que ahora la respuesta a la llamada curl directo al backend, no responderá, y esto se debe a la red puente que estamos creando para la comunicación entre backend y gateway
+```bash
+# curl http://localhost:8000/data
+curl: (7) Failed to connect to localhost port 8000 after 2259 ms: Could not connect to server
+```
+Pero si hacemos una petición apuntando a la red gateway si tendremos respuesta
+```bash
+# curl -H "X-Internal-Token: 123456" http://localhost:8001/proxy/data
+{"data":"This is public data from backend"}
+```
+
+Y como hemos puesto un rate limiting, lo que va a pasar es el que hacer demasiadas consultas en un corto periodo de tiempo, ahora la respuesta nos señalará ese caso:
+```bash
+# curl -H "X-Internal-Token: 123456" http://localhost:8001/proxy/data
+{"detail":"Too Many Requests"}
+```
+
+Para verificar este cambio o exclusión de permisos para solicitar datos, podemos verificar los logs de gateway que va a ser el encargado de verificar este spam de solicitudes http desde dispositivos según la ip
+```bash
+# docker logs gateway
+{"service": "gateway", "ip": "172.18.0.1", "endpoint": "/proxy/data", "allowed": true, "status": 200, "timestamp": 1765264524}
+INFO:     172.18.0.1:57540 - "GET /proxy/data HTTP/1.1" 200 OK
+{"service": "gateway", "ip": "172.18.0.1", "endpoint": "/proxy/data", "allowed": true, "status": 200, "timestamp": 1765264545}
+INFO:     172.18.0.1:36480 - "GET /proxy/data HTTP/1.1" 200 OK
+{"service": "gateway", "ip": "172.18.0.1", "endpoint": "/proxy/data", "allowed": true, "status": 429, "timestamp": 1765264553}
+INFO:     172.18.0.1:34842 - "GET /proxy/data HTTP/1.1" 429 Too Many Requests
+{"service": "gateway", "ip": "172.18.0.1", "endpoint": "/proxy/data", "allowed": false, "status": 429, "timestamp": 1765264557}
+INFO:     172.18.0.1:36274 - "GET /proxy/data HTTP/1.1" 429 Too Many Requests
+{"service": "gateway", "ip": "172.18.0.1", "endpoint": "/proxy/data", "allowed": false, "status": 429, "timestamp": 1765264888}
+INFO:     172.18.0.1:59514 - "GET /proxy/data HTTP/1.1" 429 Too Many Requests
+{"service": "gateway", "ip": "172.18.0.1", "endpoint": "/proxy/data", "allowed": false, "status": 429, "timestamp": 1765265035}
+INFO:     172.18.0.1:50760 - "GET /proxy/data HTTP/1.1" 429 Too Many Requests
+{"service": "gateway", "ip": "172.18.0.1", "endpoint": "/proxy/data", "allowed": false, "status": 429, "timestamp": 1765265035}
+INFO:     172.18.0.1:50764 - "GET /proxy/data HTTP/1.1" 429 Too Many Requests
+{"service": "gateway", "ip": "172.18.0.1", "endpoint": "/proxy/data", "allowed": false, "status": 429, "timestamp": 1765265035}
+INFO:     172.18.0.1:50778 - "GET /proxy/data HTTP/1.1" 429 Too Many Requests
+{"service": "gateway", "ip": "172.18.0.1", "endpoint": "/proxy/data", "allowed": false, "status": 429, "timestamp": 1765265035}
+INFO:     172.18.0.1:50790 - "GET /proxy/data HTTP/1.1" 429 Too Many Requests
+{"service": "gateway", "ip": "172.18.0.1", "endpoint": "/proxy/data", "allowed": false, "status": 429, "timestamp": 1765265035}
+INFO:     172.18.0.1:50800 - "GET /proxy/data HTTP/1.1" 429 Too Many Requests
+{"service": "gateway", "ip": "172.18.0.1", "endpoint": "/proxy/data", "allowed": false, "status": 429, "timestamp": 1765265035}
+INFO:     172.18.0.1:50808 - "GET /proxy/data HTTP/1.1" 429 Too Many Requests
+{"service": "gateway", "ip": "172.18.0.1", "endpoint": "/proxy/data", "allowed": false, "status": 429, "timestamp": 1765265036}
+INFO:     172.18.0.1:50816 - "GET /proxy/data HTTP/1.1" 429 Too Many Requests
+```
+
+Donde podemos ver que en los primeros 3 tenemos permitido el acceso pero luego será falso y no obtendremos respuesta.

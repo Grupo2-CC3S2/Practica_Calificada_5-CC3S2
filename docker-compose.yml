@@ -1,0 +1,35 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: backend
+    networks:
+      - internal_net
+    expose:
+      - "8000"
+
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.gateway
+    container_name: gateway
+    ports:
+      - "8001:8001"
+    networks:
+      - internal_net
+    depends_on:
+      - backend
+
+  tester:
+    image: curlimages/curl
+    depends_on:
+      - gateway
+    networks:
+      - internal_net
+    entrypoint: [ "sleep", "infinity" ]
+
+networks:
+  internal_net:
+    driver: bridge
+
