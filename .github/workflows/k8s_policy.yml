@@ -2,7 +2,7 @@ name: K8s Policies
 
 on:
   push:
-    branches: ["main", "develop"]
+    branches: ["main", "develop", "feature/*"]
   pull_request:
 
 jobs:
