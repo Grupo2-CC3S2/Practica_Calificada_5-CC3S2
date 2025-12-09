@@ -25,6 +25,20 @@ jobs:
           make build
           make run
 
+      - name: esperar a que gateway esté listo
+        run: |
+          echo "Esperando que http://localhost:8001/proxy/data responda..."
+          for i in $(seq 1 20); do
+            if curl -s -o /dev/null -H "X-Internal-Token: 123456" http://localhost:8001/proxy/data; then
+              echo "Gateway listo!"
+              exit 0
+            fi
+            echo "Intento $i... aún no está listo"
+            sleep 2
+          done
+          echo "Gateway no levantó a tiempo"
+          exit 1
+
       - name: realizando peticiones de prueba
         run: |
           for i in $(seq 1 7); do
