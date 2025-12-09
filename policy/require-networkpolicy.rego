@@ -1,13 +1,14 @@
 package policy.networkpolicy
 
+# Extrae todos los resources cargados por Conftest
+resources := [r | r := input]
+
 deny[msg] {
-  # Solo aplica a resources dentro del mismo namespace evaluado
-  input.kind != "NetworkPolicy"
-
-  # Si no existe ningún NetworkPolicy en el bundle evaluado
-  not some np
-  np := data.resources[_]
-  np.kind == "NetworkPolicy"
-
+  count(networkpolicies) == 0
   msg = "No existe NetworkPolicy: cada namespace debe tener al menos una"
+}
+
+networkpolicies[r] {
+  r := resources[_]
+  r.kind == "NetworkPolicy"
 }
