@@ -1,11 +1,11 @@
 package policy.networkpolicy
 
-deny[msg] if {
+deny[msg] {
   not exists_networkpolicy
   msg := "No existe ninguna NetworkPolicy en los manifests"
 }
 
-exists_networkpolicy if {
+exists_networkpolicy {
   doc := input[_]
   doc.kind == "NetworkPolicy"
 }

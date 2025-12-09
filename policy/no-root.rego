@@ -1,7 +1,8 @@
 package policy.noroot
 
 # Denegar Deployment sin runAsNonRoot en securityContext
-deny[msg] if {
+# Fíjate que eliminamos el "if" antes de la llave {
+deny[msg] {
   doc := input[_]
   doc.kind == "Deployment"
   not has_deployment_runasnonroot(doc)
@@ -9,7 +10,7 @@ deny[msg] if {
 }
 
 # Denegar containers sin runAsNonRoot
-deny[msg] if {
+deny[msg] {
   doc := input[_]
   doc.kind == "Deployment"
   container := doc.spec.template.spec.containers[_]
@@ -20,10 +21,11 @@ deny[msg] if {
   )
 }
 
-has_deployment_runasnonroot(d) if {
+# Funciones auxiliares (también sin "if")
+has_deployment_runasnonroot(d) {
   d.spec.template.spec.securityContext.runAsNonRoot == true
 }
 
-has_container_runasnonroot(c) if {
+has_container_runasnonroot(c) {
   c.securityContext.runAsNonRoot == true
 }
