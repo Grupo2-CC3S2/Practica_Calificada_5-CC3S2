@@ -32,6 +32,10 @@ jobs:
         ls -R
         echo "=== Fin del listado ==="
 
+    - name: Fix YAML EOF (Separar archivos pegados)
+      run: |
+        find k8s -type f -name "*.yaml" -exec sed -i '$a\' {} +
+
     - name: Conftest test
       # Listado de carpetas
       run: conftest test $(find k8s -name '*.yaml') -p policy/ --combine --all-namespaces
