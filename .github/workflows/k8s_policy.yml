@@ -33,6 +33,5 @@ jobs:
         echo "=== Fin del listado ==="
 
     - name: Conftest test
-      # AGREGADO: --combine
-      # Esto permite que Rego vea todos los archivos juntos para buscar la NetworkPolicy
-      run: conftest test k8s/**/*.yaml -p policy/ --combine --all-namespaces
+      # Listado de carpetas
+      run: conftest test k8s/deployments k8s/namespaces k8s/services k8s/network-policies -p policy/ --combine --all-namespaces
