@@ -25,7 +25,7 @@ jobs:
 
       - name: realizando peticiones de prueba
         run: |
-          docker compose exec tester sh -c '
+          docker compose run --rm tester sh -c '
             for i in $(seq 1 7); do
               curl -H "X-Internal-Token: 123456" http://gateway:8001/proxy/data
               echo
