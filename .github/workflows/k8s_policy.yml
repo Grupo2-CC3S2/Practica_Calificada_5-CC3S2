@@ -34,4 +34,4 @@ jobs:
 
     - name: Conftest test
       # Listado de carpetas
-      run: conftest test k8s/deployments k8s/namespaces k8s/services k8s/network-policies -p policy/ --combine --all-namespaces
+      run: conftest test $(find k8s -name '*.yaml') -p policy/ --combine --all-namespaces
