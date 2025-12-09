@@ -16,12 +16,12 @@ help: ## Muestra este mensaje de ayuda
 
 
 build:
-	@echo "Ejecutando docker compose"
-	docker compose up --build -d
-	@echo "Docker compose levantado"
+	@echo "Construyendo imágenes..."
+	docker compose build
 
-run: build
-	@echo "Creando y levantando contenedores"
+run:
+	@echo "Levantando contenedores..."
+	docker compose up -d
 
 stop:
 	@echo "Deteniendo contenedores y eliminando imagenes"
