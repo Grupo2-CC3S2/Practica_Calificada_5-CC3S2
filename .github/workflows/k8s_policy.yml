@@ -18,7 +18,7 @@ jobs:
         tar xf kubeval-linux-amd64.tar.gz
         sudo mv kubeval /usr/local/bin/
 
-    - name: Setup Conftest (install specific version)
+    - name: Setup Conftest
       uses: princespaghetti/setup-conftest@v1
       with:
         version: "0.65.0"
@@ -27,4 +27,6 @@ jobs:
       run: kubeval k8s/**/*.yaml --strict
 
     - name: Conftest test
-      run: conftest test k8s/
+      # AGREGADO: --combine
+      # Esto permite que Rego vea todos los archivos juntos para buscar la NetworkPolicy
+      run: conftest test k8s/ --combine
