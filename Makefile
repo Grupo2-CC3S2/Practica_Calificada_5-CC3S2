@@ -16,47 +16,36 @@ help: ## Muestra este mensaje de ayuda
 
 
 build:
-	@echo "Contruye red"
-	docker network create api-network
-	@echo "Contruye la imagen de backend"
-	docker build -f Dockerfile.backend -t backend .
-	@echo "Contruye la imagen de gateway"
-	docker build -f Dockerfile.gateway -t gateway .
+# Version anterior\
+	@echo "Contruye red"\
+	docker network create api-network\
+	@echo "Contruye la imagen de backend"\
+	docker build -f backend/Dockerfile.backend -t backend .\
+	@echo "Contruye la imagen de gateway"\
+	docker build -f gateway/Dockerfile.gateway -t gateway .\
 	@echo "Imagenes creadas"
+	@echo "Ejecutando docker compose"
+	docker compose up --build -d
+	@echo "Docker compose levantado"
 
 run: build
-	@echo "Levanta imagenes"
-	docker run -d --name backend --network api-network -p 8000:8000 backend
-	docker run -d --name gateway --network api-network -p 8001:8001 gateway
-	@echo "Contenedores corriendo en los puertos 8000 (backend) y 8001 (gateway)"
+	@echo "Creando y levantando contenedores"
 
 stop:
-	@echo "Deteniendo contenedores"
-	docker stop gateway backend
-	@echo "Contenedores detenidos"
+	@echo "Deteniendo contenedores y eliminando imagenes"
+	docker compose down --rmi all --volumes
 
-requests: # Peticiones HTTP
+requests: # Peticiones HTTPS
 	@echo "Realizando petición HTTP al gateway para la data"
-	docker exec gateway curl -H "X-Internal-Token: 123456" http://gateway:8001/proxy/data
-	docker exec gateway curl -H "X-Internal-Token: 123456" http://gateway:8001/proxy/admin
-	@echo "Realizando petición HTTP al backend directamente"
-	docker exec gateway curl http://backend:8000/health
-	docker exec gateway curl http://backend:8000/data
-	docker exec gateway curl http://backend:8000/admin
-	@echo "Peticiones realizadas"
-
+	for i in {1..7}; do curl -H "X-Internal-Token: 123456" http://localhost:8001/proxy/data; echo; done
 
 check: # Verificar estado de contenedores
 	@echo "Verificando estado de contenedores"
 	docker ps -a 
 
 delete: stop
-	@echo "Eliminando contenedores"
-	docker rm gateway backend
-	@echo "Eliminando red"
-	docker network rm api-network
-	@echo "Entrono limpio"
-	@make check
+	@echo "Eliminando servicio"
+
 
 venv: ## Crea entorno virtual
 	python -m venv .venv
