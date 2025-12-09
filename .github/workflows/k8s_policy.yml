@@ -26,6 +26,12 @@ jobs:
     - name: Kubeval validate
       run: kubeval k8s/**/*.yaml --strict
 
+    - name: Debug - Listar archivos
+      run: |
+        echo "=== Listando todo el repositorio ==="
+        ls -R
+        echo "=== Fin del listado ==="
+
     - name: Conftest test
       # AGREGADO: --combine
       # Esto permite que Rego vea todos los archivos juntos para buscar la NetworkPolicy
