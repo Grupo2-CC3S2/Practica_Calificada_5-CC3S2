@@ -16,14 +16,6 @@ help: ## Muestra este mensaje de ayuda
 
 
 build:
-# Version anterior\
-	@echo "Contruye red"\
-	docker network create api-network\
-	@echo "Contruye la imagen de backend"\
-	docker build -f backend/Dockerfile.backend -t backend .\
-	@echo "Contruye la imagen de gateway"\
-	docker build -f gateway/Dockerfile.gateway -t gateway .\
-	@echo "Imagenes creadas"
 	@echo "Ejecutando docker compose"
 	docker compose up --build -d
 	@echo "Docker compose levantado"
