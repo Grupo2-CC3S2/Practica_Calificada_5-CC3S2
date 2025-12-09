@@ -2,8 +2,10 @@ package policy.networkpolicy
 import rego.v1
 
 deny contains msg if {
-  not exists_networkpolicy
-  msg := "No existe ninguna NetworkPolicy en los manifests"
+    # Cuenta cuántas policies hay
+    policies := [doc | doc := input[_]; doc.kind == "NetworkPolicy"]
+    count(policies) == 0
+    msg := "No se encontró ninguna NetworkPolicy (Se requiere al menos una)"
 }
 
 exists_networkpolicy if {
