@@ -1,9 +1,13 @@
-package kubernetes.security
+package policy.networkpolicy
 
 deny[msg] {
-  input.kind == "NetworkPolicy"
-  # If no specs -> deny (we ensure policies exist)
-  false
-}
+  # Solo aplica a resources dentro del mismo namespace evaluado
+  input.kind != "NetworkPolicy"
 
-# Fail if no NetworkPolicy exists (this is checked in pipeline)
+  # Si no existe ningún NetworkPolicy en el bundle evaluado
+  not some np
+  np := data.resources[_]
+  np.kind == "NetworkPolicy"
+
+  msg = "No existe NetworkPolicy: cada namespace debe tener al menos una"
+}
