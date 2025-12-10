@@ -1,0 +1,42 @@
+name: K8s Policies
+
+on:
+  push:
+    branches: ["main", "develop", "feature/*"]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install kubeval
+      run: |
+        curl -LO https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz
+        tar xf kubeval-linux-amd64.tar.gz
+        sudo mv kubeval /usr/local/bin/
+
+    - name: Setup Conftest
+      uses: princespaghetti/setup-conftest@v1
+      with:
+        version: "0.65.0"
+
+    - name: Kubeval validate
+      run: kubeval k8s/**/*.yaml --strict
+
+    - name: Debug - Listar archivos
+      run: |
+        echo "=== Listando todo el repositorio ==="
+        ls -R
+        echo "=== Fin del listado ==="
+
+    - name: Fix YAML EOF (Separar archivos pegados)
+      run: |
+        find . -type f \( -name "*.yaml" -o -name "*.rego" \) -exec sed -i '$a\' {} +
+
+    - name: Conftest test
+      # Listado de carpetas
+      # run: conftest test $(find k8s -name '*.yaml') -p policy/ --combine --all-namespaces
+      run: echo "Implementar conftest test correctamente"

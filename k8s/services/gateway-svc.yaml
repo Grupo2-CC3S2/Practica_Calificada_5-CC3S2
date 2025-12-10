@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+  namespace: edge
+spec:
+  type: NodePort
+  selector:
+    app: gateway
+  ports:
+  - port: 8001
+    targetPort: 8001

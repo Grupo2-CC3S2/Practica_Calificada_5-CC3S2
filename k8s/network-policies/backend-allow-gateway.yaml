@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-allow-gateway
+  namespace: internal-services
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+    - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: edge
+      podSelector:
+        matchLabels:
+          app: gateway
+    ports:
+    - port: 8000
+      protocol: TCP
